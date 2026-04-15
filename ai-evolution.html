@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>人工智能的进化之路</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-deep:    #030712;
+    --bg-card:    #0d1117;
+    --accent-1:   #6366f1;
+    --accent-2:   #22d3ee;
+    --accent-3:   #f59e0b;
+    --accent-4:   #10b981;
+    --text-hi:    #f1f5f9;
+    --text-mid:   #94a3b8;
+    --text-lo:    #475569;
+    --glow-1:     rgba(99,102,241,.35);
+    --glow-2:     rgba(34,211,238,.25);
+    --font-main:  'Noto Sans SC', sans-serif;
+    --font-code:  'Space Grotesk', monospace;
+  }
+
+  html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg-deep); }
+
+  /* ── PRESENTATION SHELL ── */
+  #presentation {
+    width: 100vw; height: 100vh;
+    position: relative; overflow: hidden;
+  }
+
+  .slide {
+    position: absolute; inset: 0;
+    width: 100vw; height: 100vh; height: 100dvh;
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    padding: clamp(1.5rem, 4vw, 4rem);
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity .55s cubic-bezier(.22,1,.36,1), transform .55s cubic-bezier(.22,1,.36,1);
+    pointer-events: none;
+  }
+  .slide.active {
+    opacity: 1; transform: translateY(0);
+    pointer-events: all;
+  }
+  .slide.exit {
+    opacity: 0; transform: translateY(-40px);
+    pointer-events: none;
+  }
+
+  /* ── BACKGROUND EFFECTS ── */
+  .bg-grid {
+    position: absolute; inset: 0; z-index: 0;
+    background-image:
+      linear-gradient(rgba(99,102,241,.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(99,102,241,.05) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+  .bg-glow {
+    position: absolute; border-radius: 50%;
+    filter: blur(80px); z-index: 0;
+    pointer-events: none;
+  }
+  .content { position: relative; z-index: 1; width: 100%; max-width: 1100px; }
+
+  /* ── PROGRESS BAR ── */
+  #progress-bar {
+    position: fixed; top: 0; left: 0; height: 3px;
+    background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+    z-index: 100;
+    transition: width .4s ease;
+    box-shadow: 0 0 12px var(--glow-2);
+  }
+
+  /* ── NAV DOTS ── */
+  #nav-dots {
+    position: fixed; right: clamp(.8rem,2vw,1.5rem); top: 50%;
+    transform: translateY(-50%);
+    display: flex; flex-direction: column; gap: 10px;
+    z-index: 100;
+  }
+  .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--text-lo); cursor: pointer;
+    transition: background .3s, transform .3s;
+  }
+  .dot.active { background: var(--accent-2); transform: scale(1.4); }
+
+  /* ── SLIDE COUNTER ── */
+  #slide-counter {
+    position: fixed; bottom: 1.5rem; right: 2rem;
+    font-family: var(--font-code); font-size: .8rem;
+    color: var(--text-lo); z-index: 100;
+    letter-spacing: .1em;
+  }
+
+  /* ─────────── SLIDE 1 — HERO ─────────── */
+  #s1 { background: var(--bg-deep); }
+  #s1 .hero-eyebrow {
+    font-family: var(--font-code); font-size: clamp(.7rem,1.2vw,1rem);
+    letter-spacing: .25em; color: var(--accent-2);
+    text-transform: uppercase; margin-bottom: 1rem;
+  }
+  #s1 h1 {
+    font-family: var(--font-main); font-weight: 900;
+    font-size: clamp(2.8rem, 7vw, 7rem);
+    line-height: 1.05; color: var(--text-hi);
+  }
+  #s1 h1 span { color: var(--accent-1); display: block; }
+  #s1 .hero-sub {
+    font-family: var(--font-main); font-weight: 300;
+    font-size: clamp(1rem,1.8vw,1.4rem); color: var(--text-mid);
+    margin-top: 1.5rem; max-width: 560px;
+  }
+  #s1 .orb-a {
+    width: 520px; height: 520px;
+    background: radial-gradient(circle, var(--glow-1) 0%, transparent 70%);
+    top: -120px; right: -80px;
+  }
+  #s1 .orb-b {
+    width: 320px; height: 320px;
+    background: radial-gradient(circle, var(--glow-2) 0%, transparent 70%);
+    bottom: -60px; left: -60px;
+  }
+  .pulse-ring {
+    position: absolute; right: clamp(4rem,12vw,14rem); top: 50%;
+    transform: translateY(-50%);
+    width: clamp(180px,22vw,280px); height: clamp(180px,22vw,280px);
+  }
+  .pulse-ring svg { width: 100%; height: 100%; }
+  @keyframes rotate-slow { to { transform: rotate(360deg); } }
+  @keyframes pulse-core  { 0%,100% { opacity:.7; r: 38; } 50% { opacity:1; r: 44; } }
+  @keyframes orbit1 { to { transform: rotate(360deg); } }
+  @keyframes orbit2 { to { transform: rotate(-360deg); } }
+
+  /* ─────────── SLIDE 2 — TIMELINE ─────────── */
+  #s2 { background: var(--bg-deep); }
+  #s2 .section-label {
+    font-family: var(--font-code); font-size: clamp(.65rem,1vw,.85rem);
+    letter-spacing: .2em; color: var(--accent-1);
+    text-transform: uppercase; margin-bottom: .8rem;
+  }
+  #s2 h2 {
+    font-family: var(--font-main); font-weight: 700;
+    font-size: clamp(1.6rem,3.5vw,2.8rem); color: var(--text-hi);
+    margin-bottom: 2rem;
+  }
+  .timeline {
+    display: grid; grid-template-columns: repeat(5,1fr);
+    gap: 1rem; position: relative;
+  }
+  .timeline::before {
+    content: ''; position: absolute;
+    top: 28px; left: 10%; width: 80%; height: 2px;
+    background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+    opacity: .4;
+  }
+  .tl-item { display: flex; flex-direction: column; align-items: center; gap: .6rem; }
+  .tl-dot {
+    width: 14px; height: 14px; border-radius: 50%;
+    border: 2px solid var(--accent-2);
+    background: var(--bg-deep);
+    position: relative; z-index: 1;
+    box-shadow: 0 0 10px var(--glow-2);
+  }
+  .tl-year {
+    font-family: var(--font-code); font-size: clamp(.7rem,1vw,.9rem);
+    color: var(--accent-2); font-weight: 600;
+  }
+  .tl-event {
+    font-family: var(--font-main); font-size: clamp(.65rem,.9vw,.8rem);
+    color: var(--text-mid); text-align: center; line-height: 1.4;
+  }
+  .tl-badge {
+    font-family: var(--font-code); font-size: .6rem;
+    padding: .15rem .5rem; border-radius: 20px;
+    background: rgba(99,102,241,.15); color: var(--accent-1);
+    border: 1px solid rgba(99,102,241,.3);
+  }
+
+  /* ─────────── SLIDE 3 — THREE WAVES ─────────── */
+  #s3 { background: var(--bg-deep); }
+  .waves-grid {
+    display: grid; grid-template-columns: repeat(3,1fr);
+    gap: clamp(.8rem,1.5vw,1.5rem);
+    margin-top: 1.5rem;
+  }
+  .wave-card {
+    background: var(--bg-card);
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: 16px; padding: clamp(1rem,2vw,1.8rem);
+    display: flex; flex-direction: column; gap: .8rem;
+    position: relative; overflow: hidden;
+    transition: transform .3s, border-color .3s;
+  }
+  .wave-card:hover { transform: translateY(-4px); border-color: rgba(99,102,241,.4); }
+  .wave-card .card-num {
+    font-family: var(--font-code); font-size: clamp(2rem,3vw,3.5rem);
+    font-weight: 700; line-height: 1;
+    opacity: .12; position: absolute; top: .5rem; right: 1rem;
+  }
+  .wave-card h3 {
+    font-family: var(--font-main); font-weight: 700;
+    font-size: clamp(.9rem,1.4vw,1.2rem); color: var(--text-hi);
+  }
+  .wave-card p {
+    font-family: var(--font-main); font-weight: 300;
+    font-size: clamp(.7rem,1vw,.88rem); color: var(--text-mid);
+    line-height: 1.6;
+  }
+  .wave-card .era-tag {
+    font-family: var(--font-code); font-size: .65rem;
+    padding: .2rem .6rem; border-radius: 20px; width: fit-content;
+  }
+  .w1 .card-num, .w1 h3 { color: var(--accent-3); }
+  .w1 .era-tag { background: rgba(245,158,11,.12); color: var(--accent-3); border: 1px solid rgba(245,158,11,.3); }
+  .w2 .card-num, .w2 h3 { color: var(--accent-1); }
+  .w2 .era-tag { background: rgba(99,102,241,.12); color: var(--accent-1); border: 1px solid rgba(99,102,241,.3); }
+  .w3 .card-num, .w3 h3 { color: var(--accent-2); }
+  .w3 .era-tag { background: rgba(34,211,238,.12); color: var(--accent-2); border: 1px solid rgba(34,211,238,.3); }
+
+  /* ─────────── SLIDE 4 — BREAKTHROUGH ─────────── */
+  #s4 { background: var(--bg-deep); }
+  .breakthrough-layout {
+    display: grid; grid-template-columns: 1fr 1.2fr;
+    gap: clamp(2rem,4vw,5rem); align-items: center;
+  }
+  .breakthrough-left h2 {
+    font-family: var(--font-main); font-weight: 900;
+    font-size: clamp(2rem,4vw,3.5rem); color: var(--text-hi);
+    line-height: 1.1; margin-bottom: 1rem;
+  }
+  .breakthrough-left h2 em { font-style: normal; color: var(--accent-1); }
+  .breakthrough-left p {
+    font-family: var(--font-main); font-weight: 300;
+    font-size: clamp(.8rem,1.1vw,1rem); color: var(--text-mid);
+    line-height: 1.7;
+  }
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .stat-card {
+    background: var(--bg-card); border-radius: 12px;
+    border: 1px solid rgba(255,255,255,.06);
+    padding: 1.2rem 1rem; text-align: center;
+  }
+  .stat-card .num {
+    font-family: var(--font-code); font-size: clamp(1.5rem,2.5vw,2.5rem);
+    font-weight: 700; color: var(--accent-2);
+    display: block;
+  }
+  .stat-card .label {
+    font-family: var(--font-main); font-size: clamp(.6rem,.85vw,.8rem);
+    color: var(--text-mid); margin-top: .3rem;
+  }
+
+  /* ─────────── SLIDE 5 — LLM ERA ─────────── */
+  #s5 { background: var(--bg-deep); }
+  .llm-grid {
+    display: grid; grid-template-columns: repeat(4,1fr);
+    gap: clamp(.6rem,1vw,1rem); margin-top: 1.5rem;
+  }
+  .llm-card {
+    background: var(--bg-card);
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: 12px; padding: clamp(.8rem,1.2vw,1.2rem);
+    display: flex; flex-direction: column; gap: .5rem;
+  }
+  .llm-logo {
+    width: 36px; height: 36px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-code); font-size: .75rem; font-weight: 700;
+  }
+  .llm-card h4 {
+    font-family: var(--font-main); font-weight: 600;
+    font-size: clamp(.75rem,1.1vw,1rem); color: var(--text-hi);
+  }
+  .llm-card p {
+    font-family: var(--font-main); font-weight: 300;
+    font-size: clamp(.6rem,.85vw,.78rem); color: var(--text-mid); line-height: 1.5;
+  }
+  .llm-params {
+    font-family: var(--font-code); font-size: .65rem;
+    padding: .15rem .5rem; border-radius: 20px; width: fit-content;
+    background: rgba(34,211,238,.1); color: var(--accent-2);
+    border: 1px solid rgba(34,211,238,.25);
+  }
+
+  /* ─────────── SLIDE 6 — IMPACT ─────────── */
+  #s6 { background: var(--bg-deep); }
+  .impact-grid {
+    display: grid; grid-template-columns: repeat(3,1fr);
+    grid-template-rows: auto auto;
+    gap: clamp(.7rem,1.2vw,1.2rem); margin-top: 1.2rem;
+  }
+  .impact-card {
+    background: var(--bg-card);
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: 14px; padding: clamp(.8rem,1.5vw,1.4rem);
+    display: flex; flex-direction: column; gap: .5rem;
+  }
+  .impact-card .icon {
+    font-size: clamp(1.4rem,2.2vw,2rem);
+    margin-bottom: .2rem;
+  }
+  .impact-card h4 {
+    font-family: var(--font-main); font-weight: 600;
+    font-size: clamp(.8rem,1.1vw,1rem); color: var(--text-hi);
+  }
+  .impact-card p {
+    font-family: var(--font-main); font-weight: 300;
+    font-size: clamp(.6rem,.85vw,.78rem); color: var(--text-mid); line-height: 1.5;
+  }
+  .impact-card.highlight {
+    grid-column: span 3;
+    background: linear-gradient(135deg, rgba(99,102,241,.12), rgba(34,211,238,.08));
+    border-color: rgba(99,102,241,.3);
+    flex-direction: row; align-items: center; gap: 2rem;
+  }
+  .impact-card.highlight blockquote {
+    font-family: var(--font-main); font-weight: 500;
+    font-size: clamp(.85rem,1.3vw,1.1rem); color: var(--text-hi);
+    line-height: 1.6; border-left: 3px solid var(--accent-1);
+    padding-left: 1rem;
+  }
+
+  /* ─────────── SLIDE 7 — CHALLENGES ─────────── */
+  #s7 { background: var(--bg-deep); }
+  .challenge-layout {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: clamp(1.5rem,3vw,3rem); align-items: start;
+    margin-top: 1.5rem;
+  }
+  .challenge-list { display: flex; flex-direction: column; gap: .8rem; }
+  .c-item {
+    display: flex; gap: 1rem; align-items: flex-start;
+    background: var(--bg-card); border-radius: 10px;
+    border: 1px solid rgba(255,255,255,.05);
+    padding: .9rem 1rem;
+  }
+  .c-item .c-icon {
+    font-size: 1.2rem; flex-shrink: 0; margin-top: .1rem;
+  }
+  .c-item h4 {
+    font-family: var(--font-main); font-weight: 600;
+    font-size: clamp(.75rem,1vw,.92rem); color: var(--text-hi);
+    margin-bottom: .2rem;
+  }
+  .c-item p {
+    font-family: var(--font-main); font-weight: 300;
+    font-size: clamp(.6rem,.85vw,.78rem); color: var(--text-mid); line-height: 1.5;
+  }
+  .opportunity-box {
+    background: linear-gradient(160deg, rgba(16,185,129,.1), rgba(99,102,241,.08));
+    border: 1px solid rgba(16,185,129,.25);
+    border-radius: 14px; padding: clamp(1rem,2vw,2rem);
+    display: flex; flex-direction: column; gap: 1rem;
+  }
+  .opportunity-box h3 {
+    font-family: var(--font-main); font-weight: 700;
+    font-size: clamp(.9rem,1.4vw,1.2rem); color: var(--accent-4);
+  }
+  .opp-item {
+    display: flex; align-items: center; gap: .7rem;
+    font-family: var(--font-main); font-size: clamp(.65rem,.9vw,.85rem);
+    color: var(--text-mid);
+  }
+  .opp-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent-4); flex-shrink: 0; }
+
+  /* ─────────── SLIDE 8 — FUTURE ─────────── */
+  #s8 { background: var(--bg-deep); }
+  .future-layout {
+    display: grid; grid-template-columns: 1.2fr 1fr;
+    gap: clamp(2rem,4vw,5rem); align-items: center;
+  }
+  .future-vision h2 {
+    font-family: var(--font-main); font-weight: 900;
+    font-size: clamp(1.8rem,3.8vw,3.2rem); color: var(--text-hi);
+    line-height: 1.15; margin-bottom: 1rem;
+  }
+  .future-vision h2 span { 
+    background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .future-vision p {
+    font-family: var(--font-main); font-weight: 300;
+    font-size: clamp(.78rem,1.1vw,1rem); color: var(--text-mid); line-height: 1.7;
+  }
+  .roadmap { display: flex; flex-direction: column; gap: .7rem; }
+  .rm-item {
+    display: flex; gap: 1rem; align-items: flex-start;
+    padding: .8rem 1rem;
+    background: var(--bg-card); border-radius: 10px;
+    border-left: 3px solid transparent;
+  }
+  .rm-item.y1 { border-color: var(--accent-3); }
+  .rm-item.y3 { border-color: var(--accent-1); }
+  .rm-item.y10 { border-color: var(--accent-2); }
+  .rm-year {
+    font-family: var(--font-code); font-size: .75rem; font-weight: 700;
+    color: var(--text-mid); min-width: 50px; padding-top: .1rem;
+  }
+  .rm-item.y1 .rm-year { color: var(--accent-3); }
+  .rm-item.y3 .rm-year { color: var(--accent-1); }
+  .rm-item.y10 .rm-year { color: var(--accent-2); }
+  .rm-text {
+    font-family: var(--font-main); font-size: clamp(.65rem,.9vw,.82rem);
+    color: var(--text-mid); line-height: 1.5;
+  }
+  .rm-text strong { color: var(--text-hi); font-weight: 600; display: block; margin-bottom: .1rem; }
+
+  /* ─────────── SLIDE 9 — END ─────────── */
+  #s9 { background: var(--bg-deep); }
+  #s9 .end-tag {
+    font-family: var(--font-code); font-size: clamp(.65rem,1vw,.85rem);
+    letter-spacing: .25em; color: var(--accent-2); text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  #s9 h2 {
+    font-family: var(--font-main); font-weight: 900;
+    font-size: clamp(2.2rem,5vw,5rem); line-height: 1.1;
+    color: var(--text-hi); margin-bottom: 1.5rem;
+  }
+  #s9 h2 span {
+    background: linear-gradient(90deg, var(--accent-1), var(--accent-2), var(--accent-4));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  #s9 p {
+    font-family: var(--font-main); font-weight: 300;
+    font-size: clamp(.85rem,1.3vw,1.2rem); color: var(--text-mid);
+    max-width: 500px; line-height: 1.7;
+  }
+  .end-meta {
+    margin-top: 2rem; display: flex; gap: 2rem; align-items: center;
+    flex-wrap: wrap;
+  }
+  .end-meta .tag {
+    font-family: var(--font-code); font-size: .72rem;
+    padding: .3rem .9rem; border-radius: 20px;
+    background: rgba(99,102,241,.12); color: var(--accent-1);
+    border: 1px solid rgba(99,102,241,.3);
+  }
+
+  /* ── REVEAL ANIMATIONS ── */
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity .5s ease, transform .5s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-d1 { transition-delay: .1s; }
+  .reveal-d2 { transition-delay: .22s; }
+  .reveal-d3 { transition-delay: .34s; }
+  .reveal-d4 { transition-delay: .46s; }
+  .reveal-d5 { transition-delay: .58s; }
+  .reveal-d6 { transition-delay: .70s; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .slide, .reveal { transition: none; }
+    .slide { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+<div id="nav-dots"></div>
+<div id="slide-counter"></div>
+
+<div id="presentation">
+
+  <!-- ── SLIDE 1 ─ HERO ── -->
+  <section class="slide" id="s1" data-slide="1">
+    <div class="bg-grid"></div>
+    <div class="bg-glow orb-a"></div>
+    <div class="bg-glow orb-b"></div>
+    <div class="content">
+      <div class="reveal reveal-d1">
+        <p class="hero-eyebrow">Visual Story · 2026</p>
+      </div>
+      <div class="reveal reveal-d2">
+        <h1>人工智能<span>进化之路</span></h1>
+      </div>
+      <div class="reveal reveal-d3">
+        <p class="hero-sub">从图灵梦想到生成智能——一段改变人类文明轨迹的七十年旅程</p>
+      </div>
+    </div>
+    <div class="pulse-ring reveal reveal-d4">
+      <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#6366f1"/>
+            <stop offset="100%" stop-color="#22d3ee"/>
+          </linearGradient>
+        </defs>
+        <g style="transform-origin:100px 100px; animation: rotate-slow 20s linear infinite">
+          <circle cx="100" cy="100" r="90" stroke="url(#g1)" stroke-width="1" stroke-dasharray="8 6" opacity="0.3"/>
+        </g>
+        <g style="transform-origin:100px 100px; animation: orbit2 12s linear infinite">
+          <circle cx="100" cy="100" r="68" stroke="#6366f1" stroke-width="1" stroke-dasharray="4 10" opacity="0.2"/>
+        </g>
+        <circle cx="100" cy="100" r="44" fill="rgba(99,102,241,0.08)" stroke="#6366f1" stroke-width="1.5"/>
+        <circle cx="100" cy="14" r="6" fill="#22d3ee"/>
+        <circle cx="186" cy="100" r="5" fill="#6366f1"/>
+        <circle cx="100" cy="186" r="4" fill="#f59e0b"/>
+        <text x="100" y="107" text-anchor="middle" fill="#f1f5f9" font-size="14" font-family="Space Grotesk" font-weight="600">AI</text>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ── SLIDE 2 ─ TIMELINE ── -->
+  <section class="slide" id="s2" data-slide="2">
+    <div class="bg-grid"></div>
+    <div class="content">
+      <div class="reveal reveal-d1"><p class="section-label">Chapter 01 — History</p></div>
+      <div class="reveal reveal-d2"><h2>七十年关键节点</h2></div>
+      <div class="timeline reveal reveal-d3">
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <span class="tl-year">1950</span>
+          <span class="tl-badge">图灵测试</span>
+          <p class="tl-event">图灵提出"机器能思考吗？"奠定AI哲学基础</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <span class="tl-year">1956</span>
+          <span class="tl-badge">AI诞生</span>
+          <p class="tl-event">达特茅斯会议，"人工智能"一词正式命名</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <span class="tl-year">1997</span>
+          <span class="tl-badge">深蓝</span>
+          <p class="tl-event">IBM深蓝击败国际象棋世界冠军卡斯帕罗夫</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <span class="tl-year">2012</span>
+          <span class="tl-badge">深度学习</span>
+          <p class="tl-event">AlexNet在ImageNet大赛以绝对优势夺冠</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <span class="tl-year">2022+</span>
+          <span class="tl-badge">生成AI</span>
+          <p class="tl-event">ChatGPT、GPT-4引发全球生成式AI浪潮</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SLIDE 3 ─ THREE WAVES ── -->
+  <section class="slide" id="s3" data-slide="3">
+    <div class="bg-grid"></div>
+    <div class="content">
+      <div class="reveal reveal-d1"><p class="section-label">Chapter 02 — Evolution</p></div>
+      <div class="reveal reveal-d2"><h2>三次浪潮，三次范式跃迁</h2></div>
+      <div class="waves-grid">
+        <div class="wave-card w1 reveal reveal-d3">
+          <span class="card-num">01</span>
+          <span class="era-tag">1950–1990s</span>
+          <h3>符号主义时代</h3>
+          <p>基于规则与逻辑推理，专家系统模拟人类知识。强大但脆弱，难以应对现实世界的复杂性与模糊性。</p>
+        </div>
+        <div class="wave-card w2 reveal reveal-d4">
+          <span class="card-num">02</span>
+          <span class="era-tag">2000–2020s</span>
+          <h3>机器学习时代</h3>
+          <p>从数据中学习规律，深度神经网络彻底改变计算机视觉与语音识别。数据驱动取代规则驱动。</p>
+        </div>
+        <div class="wave-card w3 reveal reveal-d5">
+          <span class="card-num">03</span>
+          <span class="era-tag">2020s — Now</span>
+          <h3>生成智能时代</h3>
+          <p>大型预训练模型突破语言边界，跨模态理解与创作成为现实。AI从工具走向协作伙伴。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SLIDE 4 ─ BREAKTHROUGHS ── -->
+  <section class="slide" id="s4" data-slide="4">
+    <div class="bg-grid"></div>
+    <div class="bg-glow" style="width:400px;height:400px;background:radial-gradient(circle,rgba(34,211,238,.15) 0%,transparent 70%);top:-100px;right:0"></div>
+    <div class="content">
+      <div class="breakthrough-layout">
+        <div class="breakthrough-left">
+          <div class="reveal reveal-d1"><p class="section-label">Chapter 03 — Scale</p></div>
+          <div class="reveal reveal-d2">
+            <h2>规模定律<em>改变一切</em></h2>
+          </div>
+          <div class="reveal reveal-d3">
+            <p>2020年OpenAI发现：当模型参数、训练数据与算力同步扩展时，智能以可预测的方式涌现。这一"规模定律"打破了所有人的预期，开启了大模型竞赛时代。</p>
+          </div>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card reveal reveal-d3">
+            <span class="num">1.76T</span>
+            <span class="label">GPT-4 估计参数量</span>
+          </div>
+          <div class="stat-card reveal reveal-d4">
+            <span class="num">100M</span>
+            <span class="label">ChatGPT 两月用户数</span>
+          </div>
+          <div class="stat-card reveal reveal-d5">
+            <span class="num">$300B</span>
+            <span class="label">2030年AI市场规模预测</span>
+          </div>
+          <div class="stat-card reveal reveal-d6">
+            <span class="num">10,000×</span>
+            <span class="label">算力十年增长倍数</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SLIDE 5 ─ LLM ERA ── -->
+  <section class="slide" id="s5" data-slide="5">
+    <div class="bg-grid"></div>
+    <div class="content">
+      <div class="reveal reveal-d1"><p class="section-label">Chapter 04 — Models</p></div>
+      <div class="reveal reveal-d2"><h2>大模型群雄并起</h2></div>
+      <div class="llm-grid">
+        <div class="llm-card reveal reveal-d2">
+          <div class="llm-logo" style="background:rgba(16,163,127,.15);color:#10a37f">GPT</div>
+          <h4>GPT 系列</h4>
+          <span class="llm-params">OpenAI · 2018–Now</span>
+          <p>从GPT-1到GPT-4，开创大规模预训练语言模型先河，ChatGPT引发全球AI热潮。</p>
+        </div>
+        <div class="llm-card reveal reveal-d3">
+          <div class="llm-logo" style="background:rgba(99,102,241,.15);color:#818cf8">Gem</div>
+          <h4>Gemini</h4>
+          <span class="llm-params">Google · 2023–Now</span>
+          <p>谷歌多模态旗舰模型，原生理解文本、图像、音频、视频，深度整合Search与Workspace。</p>
+        </div>
+        <div class="llm-card reveal reveal-d4">
+          <div class="llm-logo" style="background:rgba(245,158,11,.15);color:#f59e0b">Clde</div>
+          <h4>Claude</h4>
+          <span class="llm-params">Anthropic · 2023–Now</span>
+          <p>以安全、无害、诚实为核心理念，长上下文窗口和深度推理能力备受专业用户青睐。</p>
+        </div>
+        <div class="llm-card reveal reveal-d5">
+          <div class="llm-logo" style="background:rgba(239,68,68,.15);color:#f87171">LLM</div>
+          <h4>Llama / 开源阵营</h4>
+          <span class="llm-params">Meta · 开源社区</span>
+          <p>Meta开源Llama系列，推动AI民主化。DeepSeek、Qwen等中国模型强势加入竞争。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SLIDE 6 ─ IMPACT ── -->
+  <section class="slide" id="s6" data-slide="6">
+    <div class="bg-grid"></div>
+    <div class="content">
+      <div class="reveal reveal-d1"><p class="section-label">Chapter 05 — Impact</p></div>
+      <div class="reveal reveal-d2"><h2>AI正在重塑每个行业</h2></div>
+      <div class="impact-grid">
+        <div class="impact-card reveal reveal-d2">
+          <div class="icon">🏥</div>
+          <h4>医疗健康</h4>
+          <p>辅助诊断准确率超越部分专科医生，药物研发周期从十年压缩至数年。</p>
+        </div>
+        <div class="impact-card reveal reveal-d3">
+          <div class="icon">🎓</div>
+          <h4>教育</h4>
+          <p>个性化学习路径、24小时AI导师，教育公平的技术路径正在成形。</p>
+        </div>
+        <div class="impact-card reveal reveal-d4">
+          <div class="icon">⚙️</div>
+          <h4>软件开发</h4>
+          <p>AI编程助手让开发效率提升30%-50%，初级代码任务正快速自动化。</p>
+        </div>
+        <div class="impact-card reveal reveal-d5">
+          <div class="icon">🎨</div>
+          <h4>创意产业</h4>
+          <p>文字、图像、音乐、视频生成，AIGC重新定义内容生产的边界与成本。</p>
+        </div>
+        <div class="impact-card reveal reveal-d6">
+          <div class="icon">🔬</div>
+          <h4>科学研究</h4>
+          <p>AlphaFold破解蛋白质折叠难题，AI正在加速人类基础科学的突破速度。</p>
+        </div>
+        <div class="impact-card highlight reveal reveal-d3">
+          <blockquote>"AI不会取代人类，但掌握AI的人将取代不掌握AI的人。"</blockquote>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SLIDE 7 ─ CHALLENGES ── -->
+  <section class="slide" id="s7" data-slide="7">
+    <div class="bg-grid"></div>
+    <div class="content">
+      <div class="reveal reveal-d1"><p class="section-label">Chapter 06 — Challenges</p></div>
+      <div class="reveal reveal-d2"><h2>挑战与机遇并存</h2></div>
+      <div class="challenge-layout">
+        <div class="challenge-list">
+          <div class="c-item reveal reveal-d2">
+            <span class="c-icon">⚠️</span>
+            <div>
+              <h4>幻觉与可信度</h4>
+              <p>大模型存在"一本正经地胡说八道"的问题，事实核验与可解释性亟待突破。</p>
+            </div>
+          </div>
+          <div class="c-item reveal reveal-d3">
+            <span class="c-icon">🔒</span>
+            <div>
+              <h4>隐私与数据安全</h4>
+              <p>海量训练数据的版权归属、用户隐私保护是监管与技术的双重难题。</p>
+            </div>
+          </div>
+          <div class="c-item reveal reveal-d4">
+            <span class="c-icon">⚡</span>
+            <div>
+              <h4>能耗与可持续性</h4>
+              <p>训练一次GPT-4的碳排放相当于数百辆汽车全年行驶，绿色AI迫在眉睫。</p>
+            </div>
+          </div>
+          <div class="c-item reveal reveal-d5">
+            <span class="c-icon">🌍</span>
+            <div>
+              <h4>数字鸿沟加剧</h4>
+              <p>AI红利分配不均，算力、数据、人才向少数科技巨头和发达国家高度集中。</p>
+            </div>
+          </div>
+        </div>
+        <div class="opportunity-box reveal reveal-d3">
+          <h3>✨ 中国的机遇</h3>
+          <div class="opp-item"><div class="opp-dot"></div><p>海量数据优势与超大规模市场</p></div>
+          <div class="opp-item"><div class="opp-dot"></div><p>制造业+AI的深度融合场景</p></div>
+          <div class="opp-item"><div class="opp-dot"></div><p>DeepSeek等开源模型弯道超车</p></div>
+          <div class="opp-item"><div class="opp-dot"></div><p>政策强力支持AI国家战略布局</p></div>
+          <div class="opp-item"><div class="opp-dot"></div><p>高校AI人才培养规模全球领先</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SLIDE 8 ─ FUTURE ── -->
+  <section class="slide" id="s8" data-slide="8">
+    <div class="bg-grid"></div>
+    <div class="bg-glow" style="width:500px;height:500px;background:radial-gradient(circle,rgba(99,102,241,.18) 0%,transparent 70%);bottom:-150px;left:-100px"></div>
+    <div class="content">
+      <div class="future-layout">
+        <div class="future-vision">
+          <div class="reveal reveal-d1"><p class="section-label">Chapter 07 — Future</p></div>
+          <div class="reveal reveal-d2">
+            <h2>迈向<span>通用人工智能</span>的未来</h2>
+          </div>
+          <div class="reveal reveal-d3">
+            <p>AGI——能够在任何智力任务上匹敌或超越人类的系统——正从科幻走向议程。我们站在一个历史的转折点上，选择与智慧同样重要。</p>
+          </div>
+        </div>
+        <div class="roadmap">
+          <div class="rm-item y1 reveal reveal-d2">
+            <span class="rm-year">近1–2年</span>
+            <div class="rm-text">
+              <strong>AI Agent 大规模落地</strong>
+              多步骤自主执行任务，Agentic AI进入企业工作流
+            </div>
+          </div>
+          <div class="rm-item y3 reveal reveal-d3">
+            <span class="rm-year">3–5年</span>
+            <div class="rm-text">
+              <strong>多模态统一模型</strong>
+              文字、图像、视频、代码、科学推理全面融合
+            </div>
+          </div>
+          <div class="rm-item y3 reveal reveal-d4">
+            <span class="rm-year">5–8年</span>
+            <div class="rm-text">
+              <strong>具身智能崛起</strong>
+              机器人+大模型，物理世界的智能化操作成为现实
+            </div>
+          </div>
+          <div class="rm-item y10 reveal reveal-d5">
+            <span class="rm-year">10年+</span>
+            <div class="rm-text">
+              <strong>AGI 的临界点</strong>
+              人类文明面临前所未有的技术-伦理重构挑战与机遇
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SLIDE 9 ─ CLOSING ── -->
+  <section class="slide" id="s9" data-slide="9">
+    <div class="bg-grid"></div>
+    <div class="bg-glow" style="width:600px;height:600px;background:radial-gradient(circle,rgba(99,102,241,.2) 0%,transparent 65%);top:50%;left:50%;transform:translate(-50%,-50%)"></div>
+    <div class="content" style="text-align:center;display:flex;flex-direction:column;align-items:center">
+      <div class="reveal reveal-d1"><p class="end-tag">The Story Continues</p></div>
+      <div class="reveal reveal-d2">
+        <h2>智能时代<br><span>我们共同书写</span></h2>
+      </div>
+      <div class="reveal reveal-d3">
+        <p>AI的故事不只是技术的故事，更是人类选择如何与智能共存的故事。每一个学习、应用、反思AI的人，都是这段历史的共同作者。</p>
+      </div>
+      <div class="end-meta reveal reveal-d4">
+        <span class="tag">#人工智能</span>
+        <span class="tag">#视觉叙事</span>
+        <span class="tag">#AI发展史</span>
+        <span class="tag">#未来已来</span>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /presentation -->
+
+<script>
+(function () {
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const dots = document.getElementById('nav-dots');
+  const progressBar = document.getElementById('progress-bar');
+  const counter = document.getElementById('slide-counter');
+  let current = 0;
+  let isAnimating = false;
+
+  /* ── build nav dots ── */
+  slides.forEach((_, i) => {
+    const d = document.createElement('button');
+    d.className = 'dot'; d.setAttribute('aria-label', `Slide ${i + 1}`);
+    d.addEventListener('click', () => goTo(i));
+    dots.appendChild(d);
+  });
+
+  function updateUI(idx) {
+    document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+    const pct = ((idx + 1) / slides.length) * 100;
+    progressBar.style.width = pct + '%';
+    counter.textContent = `${String(idx + 1).padStart(2,'0')} / ${String(slides.length).padStart(2,'0')}`;
+  }
+
+  function triggerReveals(slide) {
+    const items = slide.querySelectorAll('.reveal');
+    items.forEach(el => {
+      el.classList.remove('visible');
+      void el.offsetWidth;
+    });
+    requestAnimationFrame(() => {
+      items.forEach(el => el.classList.add('visible'));
+    });
+  }
+
+  function goTo(idx, dir) {
+    if (isAnimating || idx === current) return;
+    isAnimating = true;
+    const prev = slides[current];
+    const next = slides[idx];
+    prev.classList.remove('active');
+    prev.classList.add('exit');
+    setTimeout(() => { prev.classList.remove('exit'); }, 600);
+    next.classList.add('active');
+    triggerReveals(next);
+    current = idx;
+    updateUI(current);
+    setTimeout(() => { isAnimating = false; }, 600);
+  }
+
+  function next() { if (current < slides.length - 1) goTo(current + 1, 1); }
+  function prev() { if (current > 0) goTo(current - 1, -1); }
+
+  /* keyboard */
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); }
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')                    { e.preventDefault(); prev(); }
+  });
+
+  /* mouse wheel */
+  let wheelLock = false;
+  document.addEventListener('wheel', e => {
+    if (wheelLock) return; wheelLock = true;
+    setTimeout(() => { wheelLock = false; }, 900);
+    e.deltaY > 0 ? next() : prev();
+  }, { passive: true });
+
+  /* touch swipe */
+  let touchStart = null;
+  document.addEventListener('touchstart', e => { touchStart = e.touches[0].clientY; }, { passive: true });
+  document.addEventListener('touchend', e => {
+    if (touchStart === null) return;
+    const delta = touchStart - e.changedTouches[0].clientY;
+    if (Math.abs(delta) > 50) { delta > 0 ? next() : prev(); }
+    touchStart = null;
+  });
+
+  /* init */
+  slides[0].classList.add('active');
+  triggerReveals(slides[0]);
+  updateUI(0);
+})();
+</script>
+</body>
+</html>

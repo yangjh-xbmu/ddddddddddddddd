@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JS 基础知识</title>
+  </head>
+  <body>
+    <h1>JS 基础知识</h1>
+    <script>
+      // JS 基础知识
+      // 1. 变量声明
+      var name = "Alice"; // 传统的变量声明方式
+      console.log(name); // 输出: Alice
+      let age = 30; // ES6 引入的块级作用域变量声明
+      const PI = 3.14; // ES6 引入的常量声明
+      // 2. 数据类型
+      let str = "Hello, World!"; // 字符串
+      let num = 42; // 数字
+      let bool = true; // 布尔值
+      let arr = [1, 2, 3]; // 数组
+      let obj = { name: "Alice", age: 30 }; // 对象
+      let undef; // undefined
+      let nul = null; // null
+      // 3. 函数定义
+      function greet(name) {
+        return "Hello, " + name + "!";
+      }
+      // 4. 条件语句
+      if (age > 18) {
+        console.log("You are an adult.");
+      } else {
+        console.log("You are a minor.");
+      }
+      // 5. 循环语句
+      for (let i = 0; i < arr.length; i++) {
+        console.log(arr[i]);
+      }
+      // 6. 表达式
+      let sum = num + 10; // 算术表达式
+      let isAdult = age > 18; // 逻辑表达式
+      console.log(sum);
+      console.log(isAdult);
+    </script>
+  </body>
+</html>

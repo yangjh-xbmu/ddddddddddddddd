@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JavaScript 介绍</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0d1117;
+      --text: #e6edf3;
+      --accent: #f0b429;
+      --accent2: #58a6ff;
+      --dim: #7d8590;
+      --card: rgba(255,255,255,0.04);
+      --radius: 12px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: clamp(14px, 2vw, 20px); }
+    body {
+      font-family: 'Noto Sans SC', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow: hidden;
+      height: 100vh; height: 100dvh;
+    }
+    main { width: 100vw; height: 100vh; height: 100dvh; position: relative; }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: clamp(2rem, 6vw, 5rem);
+      opacity: 0;
+      transform: translateX(60px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+      pointer-events: none;
+    }
+    .slide.active {
+      opacity: 1;
+      transform: translateX(0);
+      pointer-events: auto;
+    }
+    .slide.exit {
+      opacity: 0;
+      transform: translateX(-60px);
+    }
+
+    /* Decorative grid */
+    .slide::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(88,166,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(88,166,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+
+    /* Floating orbs */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.15;
+      pointer-events: none;
+    }
+    .orb-1 { width: 400px; height: 400px; background: var(--accent); top: -100px; right: -100px; }
+    .orb-2 { width: 300px; height: 300px; background: var(--accent2); bottom: -80px; left: -80px; }
+
+    /* Slide 1 */
+    .slide-1 .logo {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(4rem, 12vw, 10rem);
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--accent) 0%, #ff6b6b 50%, var(--accent2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.05em;
+      line-height: 1;
+    }
+    .slide-1 h1 {
+      font-size: clamp(1.5rem, 4vw, 3rem);
+      font-weight: 900;
+      margin-top: 0.5em;
+      letter-spacing: 0.05em;
+    }
+    .slide-1 .subtitle {
+      margin-top: 1em;
+      font-size: clamp(0.9rem, 2vw, 1.3rem);
+      color: var(--dim);
+      max-width: 500px;
+      text-align: center;
+      line-height: 1.6;
+    }
+    .slide-1 .badge {
+      margin-top: 2em;
+      display: inline-flex;
+      gap: 0.5em;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .badge span {
+      padding: 0.4em 0.8em;
+      background: var(--card);
+      border: 1px solid rgba(240,180,41,0.3);
+      border-radius: 20px;
+      font-size: 0.8em;
+      color: var(--accent);
+    }
+
+    /* Slide 2 */
+    .slide-2 h2 {
+      font-size: clamp(1.4rem, 3.5vw, 2.5rem);
+      font-weight: 900;
+      margin-bottom: 2em;
+      text-align: center;
+    }
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.2em;
+      max-width: 800px;
+      width: 100%;
+    }
+    .feature-card {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius);
+      padding: 1.5em;
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+    .feature-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent);
+    }
+    .feature-card .icon {
+      font-size: 2em;
+      margin-bottom: 0.5em;
+    }
+    .feature-card h3 {
+      font-size: 1em;
+      font-weight: 700;
+      margin-bottom: 0.3em;
+    }
+    .feature-card p {
+      font-size: 0.75em;
+      color: var(--dim);
+      line-height: 1.5;
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 0.5rem;
+      z-index: 100;
+    }
+    .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--dim);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    .dot.active { background: var(--accent); transform: scale(1.3); }
+
+    .progress {
+      position: fixed;
+      top: 0; left: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transition: width 0.4s ease;
+      z-index: 100;
+    }
+
+    .hint {
+      position: fixed;
+      bottom: 4rem;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.7em;
+      color: var(--dim);
+      opacity: 0.6;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .slide, .orb, .feature-card { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress" id="progress"></div>
+
+  <main>
+    <section class="slide slide-1 active" data-index="0">
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+      <div class="logo">JS</div>
+      <h1>JavaScript</h1>
+      <p class="subtitle">驱动现代网页的脚本语言，从浏览器到服务器，从前端到后端无处不在</p>
+      <div class="badge">
+        <span>Web开发</span>
+        <span>Node.js</span>
+        <span>ES2024</span>
+      </div>
+    </section>
+
+    <section class="slide slide-2" data-index="1">
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+      <h2>核心特性</h2>
+      <div class="features">
+        <div class="feature-card">
+          <div class="icon">⚡</div>
+          <h3>动态类型</h3>
+          <p>灵活的类型系统，运行时不需声明变量类型</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">🌐</div>
+          <h3>跨平台</h3>
+          <p>浏览器、服务器、移动端、桌面端全覆盖</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">🔄</div>
+          <h3>异步编程</h3>
+          <p>Promise、async/await 让并发处理简洁优雅</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">🧩</div>
+          <h3>原型继承</h3>
+          <p>基于原型的面向对象，无需类也可实现继承</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <nav>
+    <div class="dot active" data-goto="0"></div>
+    <div class="dot" data-goto="1"></div>
+  </nav>
+
+  <div class="hint">← → 键或滑动切换</div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.dot');
+    const progress = document.getElementById('progress');
+    let current = 0;
+
+    function goTo(index) {
+      if (index < 0 || index >= slides.length) return;
+      slides[current].classList.remove('active');
+      slides[current].classList.add('exit');
+      setTimeout(() => slides[current < index ? current : index].classList.remove('exit'), 600);
+      dots[current].classList.remove('active');
+      current = index;
+      slides[current].classList.add('active');
+      dots[current].classList.add('active');
+      progress.style.width = ((current + 1) / slides.length * 100) + '%';
+    }
+
+    // Keyboard
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+        e.preventDefault();
+        goTo(current + 1);
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        goTo(current - 1);
+      }
+    });
+
+    // Touch
+    let touchStartX = 0;
+    document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+    document.addEventListener('touchend', e => {
+      const dx = touchStartX - e.changedTouches[0].clientX;
+      if (Math.abs(dx) > 50) goTo(dx > 0 ? current + 1 : current - 1);
+    });
+
+    // Wheel
+    let wheelTimeout;
+    document.addEventListener('wheel', e => {
+      clearTimeout(wheelTimeout);
+      wheelTimeout = setTimeout(() => {
+        if (e.deltaY > 0) goTo(current + 1);
+        else goTo(current - 1);
+      }, 50);
+    }, { passive: true });
+
+    // Dots
+    dots.forEach(dot => {
+      dot.addEventListener('click', () => goTo(+dot.dataset.goto));
+    });
+
+    // Init
+    progress.style.width = ((current + 1) / slides.length * 100) + '%';
+  </script>
+</body>
+</html>

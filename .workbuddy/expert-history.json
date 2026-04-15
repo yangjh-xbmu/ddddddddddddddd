@@ -1,0 +1,28 @@
+{
+  "version": 2,
+  "sessions": {
+    "3e2437f1a2db4536b5c89a700d24e3e6": [
+      {
+        "expertId": "VisualStorytellingExpert",
+        "name": "图说说",
+        "profession": "视觉叙事专家",
+        "avatarUrl": "https://acc-1258344699.cos.accelerate.myqcloud.com/workbuddy/experts/avatars/01-Design/VisualStorytellingExpert/VisualStorytellingExpert.png",
+        "promptUrl": "https://acc-1258344699.cos.accelerate.myqcloud.com/workbuddy/experts/experts/01-Design/VisualStorytellingExpert/VisualStorytellingExpert_zh.md",
+        "usedAt": 1776211951623,
+        "industryId": "01-Design"
+      }
+    ],
+    "37007381901842f18cf2fc509747c2f5": [
+      {
+        "expertId": "ContentCreator",
+        "name": "文爆爆",
+        "profession": "内容创作专家",
+        "avatarUrl": "https://acc-1258344699.cos.accelerate.myqcloud.com/workbuddy/experts/avatars/03-Marketing/ContentCreator/ContentCreator.png",
+        "promptUrl": "https://acc-1258344699.cos.accelerate.myqcloud.com/workbuddy/experts/experts/03-Marketing/ContentCreator/ContentCreator_zh.md",
+        "usedAt": 1776214370431,
+        "industryId": "all"
+      }
+    ]
+  },
+  "lastUpdated": 1776214530069
+}
